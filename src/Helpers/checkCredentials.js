@@ -1,16 +1,18 @@
 const userModel = require("../model/userModel");
 const passwordUtil = require("./hash_match_password");
 
-const check = async (phone, password) => {
+const check = async (email, password) => {
 
     try {
-        const user = await userModel.findOne({ phoneNumber: phone });
+        const user = await userModel.findOne({email});
         if (user == null) {
+            console.log("null");
             return null;
         }
         else {
             const isPasswordMatching = await passwordUtil.matchPassword(password, user.password);
             if (isPasswordMatching) {
+                console.log("true");
                 return true;
             }
             else {
@@ -19,7 +21,7 @@ const check = async (phone, password) => {
             }
         }
     } catch (error) {
-
+        console.log(error);
     }
 }
 
