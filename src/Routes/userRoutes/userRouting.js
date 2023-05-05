@@ -15,29 +15,25 @@ router.post("/signup", Validation.checkEmail, Validation.checkPhoneNumber, async
     const email = req.body.email;
     const phoneNumber = req.body.phoneNumber;
     const password = await passwordUtil.hashPassword(req.body.password);
-    const balance = req.body.balance;
-    const user = new userModel({ firstname, lastname, email, phoneNumber, password, balance })
+    const user = new userModel({ firstname, lastname, email, phoneNumber, password })
     try {
         //creating the user
         const data = await user.save();
-        //creating the account
-        const user_id=data._id;
-        const account=new accountModel({user:user_id,balance:0})
-        const accountData=account.save();
+        //creating the accoung
         res.status(200).json({"message":"successfully saved user"});
     } catch (error) {
-        res.status(400).json({ "message": error });
+        res.status(400).json({ "message": error.message });
     }
 
 })
 
 
 router.post("/login", async (req, res) => {
-    const phoneNumber = req.body.phone;
+    const email = req.body.email;
     const password = req.body.password;
-    const isMatching = await checkCredentials(phoneNumber, password);
+    const isMatching = await checkCredentials(email, password);
     if (isMatching == true) {
-        const token = await generateToken(phoneNumber);
+        const token = await generateToken(email);
         res.status(200).json({ "message": "logged in successful", "token": token })
     }
     else if (isMatching == null) {
